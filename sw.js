@@ -1,0 +1,5 @@
+const CACHE='saegonggan-v9';
+const ASSETS=["./", "./index.html", "./admin.html", "./styles.css", "./app.js", "./assets/fonts/jua-korean.woff2", "./assets/fonts/jua-latin.woff2", "./assets/spaces/F01.webp", "./assets/spaces/F02.webp", "./assets/spaces/F03.webp", "./assets/spaces/F04.webp", "./assets/spaces/F05.webp", "./assets/spaces/F06.webp", "./assets/spaces/F07.webp", "./assets/spaces/R01.webp", "./assets/spaces/R02.webp", "./assets/spaces/R03.webp", "./assets/spaces/R04.webp", "./assets/spaces/R05.webp"];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(r=>{let copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r}).catch(()=>caches.match('./index.html'))))});
